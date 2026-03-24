@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cookie Banner</title>
+  <title>Cookie Banner with Trackers</title>
   <style>
     #cookie-banner {
       position: fixed;
@@ -16,15 +16,9 @@
       box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
       z-index: 9999;
     }
-    #cookie-banner h2 {
-      margin-top: 0;
-    }
-    .cookie-option {
-      margin: 10px 0;
-    }
-    .cookie-option label {
-      margin-left: 8px;
-    }
+    #cookie-banner h2 { margin-top: 0; }
+    .cookie-option { margin: 10px 0; }
+    .cookie-option label { margin-left: 8px; }
     #cookie-banner button {
       margin-top: 15px;
       padding: 8px 16px;
@@ -34,9 +28,7 @@
       cursor: pointer;
       border-radius: 4px;
     }
-    #cookie-banner button:hover {
-      background: #005a9e;
-    }
+    #cookie-banner button:hover { background: #005a9e; }
   </style>
 </head>
 <body>
@@ -71,26 +63,82 @@
 <script>
   function savePreferences() {
     const preferences = {
-      functional: true, // always enabled
+      functional: true,
       analytics: document.getElementById('analytics').checked,
       marketing: document.getElementById('marketing').checked,
       others: document.getElementById('others').checked
     };
 
-    // Store preferences in localStorage (or send to backend)
     localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
-
-    // Hide banner after saving
     document.getElementById('cookie-banner').style.display = 'none';
+
+    // Load trackers based on consent
+    if (preferences.analytics) {
+      loadAnalytics();
+    }
+    if (preferences.marketing) {
+      loadMarketing();
+    }
+    if (preferences.others) {
+      loadOthers();
+    }
 
     console.log('Saved cookie preferences:', preferences);
   }
 
-  // Check if preferences already exist
+  function loadAnalytics() {
+    // Example: Google Analytics
+    var gaScript = document.createElement('script');
+    gaScript.src = "https://www.googletagmanager.com/gtag/js?id=UA-XXXXXX-X";
+    gaScript.async = true;
+    document.head.appendChild(gaScript);
+
+    gaScript.onload = function() {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-XXXXXX-X');
+      console.log("Analytics tracker loaded");
+    };
+  }
+
+  function loadMarketing() {
+    // Example: Facebook Pixel
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', 'YOUR_PIXEL_ID');
+      fbq('track', 'PageView');
+      console.log("Marketing tracker loaded");
+  }
+
+  function loadOthers() {
+    // Example: Hotjar
+    (function(h,o,t,j,a,r){
+      h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+      h._hjSettings={hjid:123456,hjsv:6};
+      a=o.getElementsByTagName('head')[0];
+      r=o.createElement('script');r.async=1;
+      r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+      a.appendChild(r);
+      console.log("Other tracker loaded");
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+  }
+
+  // Auto-hide banner if preferences already saved
   window.onload = function() {
     const saved = localStorage.getItem('cookiePreferences');
     if (saved) {
       document.getElementById('cookie-banner').style.display = 'none';
+      const prefs = JSON.parse(saved);
+      if (prefs.analytics) loadAnalytics();
+      if (prefs.marketing) loadMarketing();
+      if (prefs.others) loadOthers();
     }
   };
 </script>
