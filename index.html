@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cookie Banner</title>
+  <style>
+    #cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #f9f9f9;
+      border-top: 2px solid #ccc;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+      z-index: 9999;
+    }
+    #cookie-banner h2 {
+      margin-top: 0;
+    }
+    .cookie-option {
+      margin: 10px 0;
+    }
+    .cookie-option label {
+      margin-left: 8px;
+    }
+    #cookie-banner button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      border: none;
+      background: #0078d7;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    #cookie-banner button:hover {
+      background: #005a9e;
+    }
+  </style>
+</head>
+<body>
+
+<div id="cookie-banner">
+  <h2>Cookie Preferences</h2>
+  <p>We use cookies to improve your experience. Adjust your preferences below:</p>
+
+  <div class="cookie-option">
+    <input type="checkbox" id="functional" checked disabled>
+    <label for="functional">Functional Cookies (always enabled)</label>
+  </div>
+
+  <div class="cookie-option">
+    <input type="checkbox" id="analytics">
+    <label for="analytics">Analytics Cookies (Tracker 2)</label>
+  </div>
+
+  <div class="cookie-option">
+    <input type="checkbox" id="marketing">
+    <label for="marketing">Marketing Cookies (Tracker 2)</label>
+  </div>
+
+  <div class="cookie-option">
+    <input type="checkbox" id="others">
+    <label for="others">Other Cookies (Tracker 2)</label>
+  </div>
+
+  <button onclick="savePreferences()">Save Preferences</button>
+</div>
+
+<script>
+  function savePreferences() {
+    const preferences = {
+      functional: true, // always enabled
+      analytics: document.getElementById('analytics').checked,
+      marketing: document.getElementById('marketing').checked,
+      others: document.getElementById('others').checked
+    };
+
+    // Store preferences in localStorage (or send to backend)
+    localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
+
+    // Hide banner after saving
+    document.getElementById('cookie-banner').style.display = 'none';
+
+    console.log('Saved cookie preferences:', preferences);
+  }
+
+  // Check if preferences already exist
+  window.onload = function() {
+    const saved = localStorage.getItem('cookiePreferences');
+    if (saved) {
+      document.getElementById('cookie-banner').style.display = 'none';
+    }
+  };
+</script>
+
+</body>
+</html>
